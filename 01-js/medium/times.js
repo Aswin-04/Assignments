@@ -8,6 +8,16 @@ Hint - use Date class exposed in JS
 There is no automated test for this one, this is more for you to understand time goes up as computation goes up
 */
 
+let d = new Date()
 function calculateTime(n) {
-    return 0.01;
+
+    let sum = 0
+    for(let i=1; i <= n; i++) {
+        sum+=i
+    }
 }
+
+let timeBeforeCodeRuns = new Date()
+calculateTime(10000000000)
+let timeAfterCodeRuns = new Date()
+console.log(`${(timeAfterCodeRuns - timeBeforeCodeRuns)/1000 } sec`)
