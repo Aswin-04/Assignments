@@ -41,9 +41,58 @@
  */
   const express = require('express');
   const bodyParser = require('body-parser');
-  
   const app = express();
-  
   app.use(bodyParser.json());
+
+  let todoList = []
+
+  app.get("/todos/", (req, res) => {
+    res.status(200).json(todoList)
+  })
+
+  app.get("/todos/:id", (req, res) => {
+    const retrievedTodo = todoList.find((todo) => todo.id == req.params.id);
+    if (retrievedTodo) {
+      res.status(200).json(retrievedTodo);
+      return;
+    }
+    res.status(404).send(`404 not found`);
+  })
+
+  app.post("/todos/", (req, res) => {
+    const newTodo = req.body
+    const generatedId = Math.floor(Math.random() * 100)
+    newTodo.id = generatedId
+    todoList.push(newTodo)
+
+    res.status(201).json({id : generatedId,})
+
+  })
+
+  app.put("/todos/:id", (req, res) => {
+
+    const targetId = req.params.id
+    const targetIndex = todoList.findIndex((todo) => todo.id == targetId)
+    if(targetIndex == -1) {
+      res.status(404).send(`404 not found`)
+    }
+    todoList[targetIndex] = req.body
+    todoList[targetIndex].id = targetId 
+    res.status(200).send()
+  })
+
+  app.delete("/todos/:id", (req, res) => {
+    const targetId = req.params.id;
+    let newTodoList = todoList.filter((todo) => todo.id != targetId);
+    if (newTodoList) {
+      todoList = newTodoList;
+      res.status(200).send();
+    }
+    res.status(404).send(`404 not found`);
+  })
+
+  app.use((req, res) => {
+    res.status(404).send("Route not found")
+  })
   
   module.exports = app;
