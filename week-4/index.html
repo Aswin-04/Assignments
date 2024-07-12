@@ -7,16 +7,54 @@
     let todoState = [];
     let oldTodoState = [];
 
-    function addTodoToDom() {
+    function addTodoToDom(todo) {
+
+      const todoDiv = document.createElement("div")
+      const title = document.createElement("div")
+      const description = document.createElement("div")
+      const deleteButton = document.createElement("button")
+      const updateButton = document.createElement("button")
+
       
+      title.innerText = todo.title
+      description.innerText = todo.description
+      todoDiv.setAttribute("id", `${todo.id}`)
+      const todos = document.getElementById("todos")
+
+      updateButton.innerText = "update"
+      deleteButton.innerText = "delete"
+
+      todoDiv.appendChild(title)
+      todoDiv.appendChild(description)
+      todoDiv.appendChild(deleteButton)
+      todoDiv.appendChild(updateButton)
+      todos.appendChild(todoDiv)
+
+      deleteButton.addEventListener("click", () => {
+        deleteTodoFromDom(todo)
+      })
+
+      updateButton.addEventListener("click", () => {
+        initiateTodoUpdate(todo)
+      })
+
     }
 
     function removeTodoFromDom(todo) {
-      
+
+      const id = todo.id
+      const todoDiv = document.getElementById(id)
+      const todos = document.getElementById("todos")
+
+      todos.removeChild(todoDiv)
+  
     }
 
     function updateTodoInDom(oldTodo, newTodo) {
-        
+
+      const oldTodoDiv = document.getElementById(oldTodo.id)
+      oldTodoDiv.children[0].innerText = newTodo.title;
+      oldTodoDiv.children[1].innerText = newTodo.description        
     }
 
     function updateState(newTodos) {
@@ -28,10 +66,39 @@
       const added = [];
       const deleted = [];
       const updated = [];
+
+      const oldTodoMap = new Map(oldTodoState.map((todo) => [todo.id, todo]))
+      console.log(oldTodoMap)
+      const newTodoMap = new Map(newTodos.map((todo) => [todo.id, todo]))
+      console.log(newTodoMap)
+
+      newTodos.forEach((newTodo) => {
+        if(!oldTodoMap.has(newTodo.id)) {
+          added.push(newTodo)
+        } else {
+          const oldTodo = oldTodoMap.get(newTodo.id)
+          if(oldTodo.title != newTodo.title || oldTodo.description != newTodo.description) {
+            updated.push({oldTodo, newTodo})
+          }
+        }
+      })
+
+      oldTodoState.forEach((oldTodo) => {
+        if(!newTodoMap.has(oldTodo.id)) {
+          deleted.push(oldTodo)
+        }
+      })
+
       // calculate these 3 arrays
       // call addTodo, removeTodo, updateTodo functions on each of the
       // elements
-      oldTodoState = newTodos;
+
+      added.forEach((todo) => addTodoToDom(todo))
+      deleted.forEach((todo) => removeTodoFromDom(todo))
+      updated.forEach(({oldTodo, newTodo}) => updateTodoInDom(oldTodo, newTodo))
+
+      oldTodoState = [...newTodos];
+      console.log(oldTodoState)
     }
 
     function addTodo() {
@@ -44,6 +111,47 @@
       })
       updateState(todoState);
     }
+
+    function deleteTodoFromDom(givenTodo) {
+      todoState = todoState.filter((todo) => todo.id != givenTodo.id)
+      removeTodoFromDom(givenTodo)
+      oldTodoState = [...todoState]
+    }
+
+    // function initiateTodoUpdate(givenTodo) {
+    //   let newTitle = prompt("Enter Title: ", givenTodo.title)
+    //   let newDescription = prompt("Enter Description: ", givenTodo.description)
+
+    //   let modifiedTodo = todoState.find((todo) => todo.id === givenTodo.id)
+
+    //   if(modifiedTodo){
+    //     modifiedTodo.title = newTitle
+    //     modifiedTodo.description = newDescription
+    //   }
+
+    //   updateState(todoState)
+    // }
+
+      function initiateTodoUpdate(givenTodo) {
+        let newTitle = prompt("Enter Title: ", givenTodo.title);
+        let newDescription = prompt("Enter Description: ", givenTodo.description);
+
+        // Create a new object for the updated todo
+        const updatedTodo = {
+          ...givenTodo, // Spread operator to copy existing properties
+          title: newTitle,
+          description: newDescription,
+        };
+
+        // Update the todoState by mapping over it and replacing the old todo
+        todoState = todoState.map((todo) =>
+          todo.id === givenTodo.id ? updatedTodo : todo
+        );
+
+        // Update the oldTodoState as well
+        updateState(todoState);
+      }
+
   </script>
 </head>
 
