@@ -1,11 +1,15 @@
-import Dashboard from "./Dashboard";
-import Signin from "./Signin";
-import Signup from "./Signup";
-import SendMoney from "./SendMoney";
+import Heading from "./Heading";
+import SubHeading from "./SubHeading";
+import InputBox from "./InputBox";
+import Button from "./Button";
+import BottomWarning from "./BottomWarning";
 
-export default {
-  Dashboard,
-  Signin,
-  Signup,
-  SendMoney
+
+
+export {
+  Heading,
+  SubHeading,
+  InputBox,
+  Button,
+  BottomWarning,
 }

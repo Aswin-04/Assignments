@@ -8,7 +8,7 @@ import {
   Signin,
   Signup,
   SendMoney
-} from './components/'
+} from './pages/index'
 
 const router = createBrowserRouter([
   {
