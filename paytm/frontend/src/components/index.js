@@ -3,7 +3,9 @@ import SubHeading from "./SubHeading";
 import InputBox from "./InputBox";
 import Button from "./Button";
 import BottomWarning from "./BottomWarning";
-
+import Appbar from "./Appbar";
+import Balance from "./Balance";
+import Users from "./Users";
 
 
 export {
@@ -12,4 +14,7 @@ export {
   InputBox,
   Button,
   BottomWarning,
+  Appbar,
+  Balance,
+  Users,
 }
