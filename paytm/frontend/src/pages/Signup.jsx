@@ -7,6 +7,7 @@ import {
   Button,
   BottomWarning,
 } from "../components";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
 
@@ -14,6 +15,8 @@ const Signup = () => {
   const [lastName, setLastName] = useState("")
   const [username, setUsername ] = useState("")
   const [password, setPassword] = useState("")
+
+  const navigate = useNavigate()
 
 
   return (
@@ -27,13 +30,15 @@ const Signup = () => {
           <InputBox onChange={(e) => setUsername(e.target.value)} label={"Email"} placeholder={"aswin@gmail.com"} />
           <InputBox onChange={(e) => setPassword(e.target.value)} label={"Password"} placeholder={"12345678"} />
           <div className="pt-4">
-            <Button onClick={() => {
-              axios.post("http://localhost:3000/api/v1/users/signup/", {
+            <Button onClick={async () => {
+              const response = await axios.post("http://localhost:3000/api/v1/users/signup/", {
                 username,
                 password,
                 firstName,
                 lastName
               })
+              localStorage.setItem("token", response.data.token)
+              navigate("/dashboard")
             }} label={"Sign up"} />
           </div>
           <BottomWarning

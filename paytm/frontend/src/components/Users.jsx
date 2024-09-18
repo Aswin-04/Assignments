@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Users = () => {
-  const [users, setUsers] = useState([
-    {
-      firstName: "Harkirat",
-      lastName: "Singh",
-      _id: 1,
-    },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [filter, setFilter] = useState("");
+
+  useEffect( () => async () => {
+    const response  = await axios.get("http://localhost:3000/api/v1/users/bulk/?filter=" + filter)
+    setUsers(response.data.users)
+  }, [filter])
 
   return (
     <div className="">
@@ -18,6 +20,9 @@ const Users = () => {
           className="w-full px-2 py-1 border rounded border-slate-200"
           type="text"
           placeholder="Search users"
+          onChange={(e) => {
+            setFilter(e.target.value)
+          } }
         />
       </div>
       {users.map((user) => (
@@ -28,6 +33,8 @@ const Users = () => {
 };
 
 function User({ user }) {
+
+  const navigate = useNavigate()
   return (
     <div className="flex justify-between">
       <div className="flex items-center">
@@ -39,7 +46,7 @@ function User({ user }) {
         </div>
       </div>
       <div className="">
-        <Button label={"Send Money"} />
+        <Button label={"Send Money"} onClick={() => {navigate("/send?id=" + user._id + "&name=" + user.firstName)}}/>
       </div>
     </div>
   );
