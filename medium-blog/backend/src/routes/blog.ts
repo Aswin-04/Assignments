@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { createBlogInput, updateBlogInput } from '@aswin-04/medium-blog_common'
 
-export const blogRouter = new Hono<{
+export const  blogRouter = new Hono<{
   Bindings: {
     DATABASE_URL:string,
     JWT_SECRET:string
@@ -106,7 +106,20 @@ blogRouter.get('/bulk', async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate())
 
-  const blogs = await prisma.blogs.findMany();
+  const blogs = await prisma.blogs.findMany(
+    {
+      select: {
+        id: true,
+        content: true,
+        title: true,
+        author: {
+          select: {
+            name: true
+          }
+        }
+      }
+    }
+  );
 
   return c.json({blogs}, 200)
 })
