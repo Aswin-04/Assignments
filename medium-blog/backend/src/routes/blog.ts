@@ -3,6 +3,7 @@ import { decode, sign, verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { createBlogInput, updateBlogInput } from '@aswin-04/medium-blog_common'
+import { string } from 'zod'
 
 export const  blogRouter = new Hono<{
   Bindings: {
@@ -136,6 +137,19 @@ blogRouter.get('/:id', async (c) => {
     const blog = await prisma.blogs.findFirst({
       where: {
         id: id
+      },
+
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        authorId: true,
+        author: {
+          select: {
+            name: true
+          }
+        }
+
       }
     })
 
